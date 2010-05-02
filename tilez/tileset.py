@@ -12,16 +12,41 @@
 
 from base import Base
 from tile import Tile
+from draw import Drawer
+
 
 class Tileset (Base):
 	def __init__(self):
 		Base.__init__(self)
 		
-		#self.data 							# The tileset image
+		self.data =	None			 		# The tileset image
 		self.size = (0, 0) 					# In pixels
 		self.sizeTiles = (0, 0) 			# In tiles
 		
 		self.tileSize = (0, 0) 				# In pixels
+		
+		self.drawer = Drawer()				# Interface to graphics
+		
+	"""Loads an image to use as a tileset
+		Args:
+			filename - The path to the image to use.
+			size - The size of each tile (in pixels)
+			
+		Returns:
+			True if succesfull, False if not
+	"""
+	def loadTileset(self, filename, size):
+		# Try to load the file
+		image = self.drawer.LoadImage(filename)
+		if not image:
+			print("Could not load image at " + filename)
+			return False
+			
+		# Okay, file loaded.
+		self.data = image
+		
+		# Set the tilesize
+		self.tilesize = size
 	
 	"""Get the top and bottom coords for a tile
 	
