@@ -11,21 +11,20 @@
 #
 
 from base import Base
+from map import Map
 from tile import Tile
-from draw import Drawer
-
 
 class Tileset (Base):
 	def __init__(self):
 		Base.__init__(self)
+		
+		self.map = None						# The associated map
 		
 		self.data =	None			 		# The tileset image
 		self.size = (0, 0) 					# In pixels
 		self.sizeTiles = (0, 0) 			# In tiles
 		
 		self.tileSize = (0, 0) 				# In pixels
-		
-		self.drawer = Drawer()				# Interface to graphics
 		
 	"""Loads an image to use as a tileset
 		Args:
@@ -35,7 +34,7 @@ class Tileset (Base):
 		Returns:
 			True if succesfull, False if not
 	"""
-	def loadTileset(self, filename, size):
+	def load(self, filename, size):
 		# Try to load the file
 		image = self.drawer.LoadImage(filename)
 		if not image:

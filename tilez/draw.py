@@ -28,8 +28,16 @@ class Drawer (Base):
 		
 		return image
 	
-	def blit(self, top, bottom, source):
-		pass
+	# Draw an image onto another (the map image)
+	def blit(self, top, bottom, pos, source):
+		# make a temperory sprite
+		sprite = sf.Sprite()
+		sprite.SetSubRect(sf.IntRect(top[0], top[1], bottom[0], bottom[1])
+		sprite.SetPosition(pos[0], pos[1])
 		
+		# draw to our image
+		self.image.Draw(sprite)
+	
+	# clears the image to black	
 	def clear(self):
-		pass
+		self.image.Clear(sf.color(0, 0, 0, 255))
