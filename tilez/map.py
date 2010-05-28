@@ -5,6 +5,7 @@
 
 from base import Base
 from draw import Drawer
+from tileset import Tileset
 
 from xml.sax import handler
 
@@ -54,6 +55,7 @@ class MapLoader(handler):
 		self.map = map
 		
 		self.inMap = False
+		self.inTileset = False
 		
 	# The start of an xml tag
 	def startElement(self, name, attrs):
@@ -68,7 +70,38 @@ class MapLoader(handler):
 			# remember that we are in this tag
 			self.inMap = True
 		
+		# Tileset tag
+		# Add a new tileset to the map with all the options
+		if name == 'tileset' and self.inMap == True:
+			# Make a new blank tileset.
+			tileset = Tileset()
+			
+			# Fill it with some of the new info in this tag
+			if 'tilewidth' in attrs.getNames():
+				tileset.tileSize[0] = attrs.getValue('tilewidth')
+			if 'tileheight' in attrs.getNames():
+				tileset.tileSize[1] = attrs.getValue('tileheight')
+			if 'name' in attrs.getNames():
+				tileset.name = attrs.getValue('name')
+				
+			# K, add this tileset to the loaded map
+			# We can add things from nested tags into it later.
+			
+			self.inTileset = True
+			
+		# Image Tag
+		# We should add this image to the current tileset
+		if name == 'image' and self.inTileset:
+			# Find the location of the image and load it
+			if 'source' in attrs.getNames():
+				self.tileset[-1].data = self.drawer.loadImage(attr.getValue('source'))
+			
+			# K, done... assuming that image loaded.
+			
+			
 	# The end of an xml tag
 	def endElement(self, name, attrs):
 		if name == 'map':
 			self.inMap = False
+		if name == 'tileset':
+			self.inTileset = False

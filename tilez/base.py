@@ -2,4 +2,4 @@
 
 class Base:
 	def __init__(self):
-		pass
+		self.name = '' # A convenient name for every class =)

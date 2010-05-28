@@ -26,6 +26,12 @@ class Drawer (Base):
 		image = sf.Image()
 		image.LoadFromFile(filename)
 		
+		if image == None:
+			# Couldn't load image for some reason...
+			print("Error, Could not load image at '" + filename + "'\n")
+			print("Do you have permission to access these files? Do they exist?\n")
+			return None
+		
 		return image
 	
 	# Draw an image onto another (the map image)
