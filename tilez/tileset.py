@@ -11,7 +11,6 @@
 #
 
 from base import Base
-from map import Map
 from tile import Tile
 
 class Tileset (Base):
@@ -21,10 +20,10 @@ class Tileset (Base):
 		self.map = None						# The associated map
 		
 		self.data =	None			 		# The tileset image
-		self.size = (0, 0) 					# In pixels
-		self.sizeTiles = (0, 0) 			# In tiles
+		self.size = [0, 0] 					# In pixels
+		self.sizeTiles = [0, 0] 			# In tiles
 		
-		self.tileSize = (0, 0) 				# In pixels
+		self.tileSize = [0, 0]				# In pixels
 		
 	"""Loads an image to use as a tileset
 		Args:
@@ -36,7 +35,7 @@ class Tileset (Base):
 	"""
 	def load(self, filename, size):
 		# Try to load the file
-		image = self.drawer.LoadImage(filename)
+		image = self.map.drawer.loadImage(filename)
 		if not image:
 			print("Could not load image at " + filename)
 			return False

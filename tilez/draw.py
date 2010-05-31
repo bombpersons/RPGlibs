@@ -19,10 +19,10 @@ class Drawer (Base):
 	
 	# Set the resolution to draw the map
 	def setResolution(self, width, height):
-		self.image = sf.Image(width, height, sf.color(0, 0, 0, 255)
+		self.image = sf.Image(width, height, sf.color(0, 0, 0, 255))
 		
 	# Load an image
-	def loadImage(self, fileimage):
+	def loadImage(self, filename):
 		image = sf.Image()
 		image.LoadFromFile(filename)
 		
@@ -38,7 +38,7 @@ class Drawer (Base):
 	def blit(self, top, bottom, pos, source):
 		# make a temperory sprite
 		sprite = sf.Sprite()
-		sprite.SetSubRect(sf.IntRect(top[0], top[1], bottom[0], bottom[1])
+		sprite.SetSubRect(sf.IntRect(top[0], top[1], bottom[0], bottom[1]))
 		sprite.SetPosition(pos[0], pos[1])
 		
 		# draw to our image
@@ -46,4 +46,5 @@ class Drawer (Base):
 	
 	# clears the image to black	
 	def clear(self):
-		self.image.Clear(sf.color(0, 0, 0, 255))
+		if self.image != None:
+			self.image.Clear(sf.color(0, 0, 0, 255))

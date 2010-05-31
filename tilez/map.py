@@ -8,52 +8,14 @@ from draw import Drawer
 from tileset import Tileset
 from layer import Layer
 
-from xml.sax import handler
-
-class Map (Base):
-	def __init__(self):
-		Base.__init__(self)
-		
-		# Define some variables
-		self.tilesets = []					# Tilesets the map can use
-		self.drawer = Drawer()				# Interface to graphics
-		
-		self.layers = []					# The map data (tiles)
-		self.size = (0, 0)					# The maps dimensions
-	
-	"""Loads a map and associated data (tilesets etc..)
-	   Args:
-			filename - The path to the map.
-	   
-	   Returns:
-			True if succesfull
-	"""
-	def load(self, filename):
-		pass
-	
-	"""Clears and Updates the maps image
-	   Args:
-			None
-	   Returns:
-			True if succesfull
-	"""
-	def update(self):
-		for layer in self.layers:
-			n = 0
-			for tile in layer:
-				self.tilesets[0].getTile(tile % self.tilesets[0].sizeTiles[0], int(tile / self.tilesets[0].sizeTiles[0])).draw(n % self.size[0], int(n / self.size[0])
-				n += 1
-		
-		#No Problems
-		return True
+from xml.sax import ContentHandler, parse
 
 # A sax handler to load xml maps
-class MapLoader(handler):
-	# Set the map to load into
-	def __init__(self, map):
-		handler.__init__(self)
+class MapLoader (ContentHandler):
+	def __init__(self):
+		ContentHandler.__init__(self)
 		
-		self.map = map
+		self.map = Map()
 		
 		self.dataBuffer = ''
 		self.dataEncoding = ''
@@ -61,16 +23,19 @@ class MapLoader(handler):
 		self.inMap = False
 		self.inTileset = False
 		self.inLayer = False
+		self.inData = False
 		
 	# The start of an xml tag
 	def startElement(self, name, attrs):
 		if name == 'map':
 			# We can get some basic info about the map from this tag
 			if 'width' in attrs.getNames():
-				self.map.size[0] = attrs.getValue('width')
+				# Be careful here, attrs.getValue always return a
+				# string, so always convert afterwards
+				self.map.size[0] = int(attrs.getValue('width'))
 			
 			if 'height' in attrs.getNames():
-				self.map.size[1] = attrs.getValue('height')
+				self.map.size[1] = int(attrs.getValue('height'))
 			
 			# remember that we are in this tag
 			self.inMap = True
@@ -81,15 +46,20 @@ class MapLoader(handler):
 			# Make a new blank tileset.
 			tileset = Tileset()
 			
+			# Attach the map to the tileset
+			tileset.map = self.map
+			
 			# Fill it with some of the new info in this tag
 			if 'tilewidth' in attrs.getNames():
-				tileset.tileSize[0] = attrs.getValue('tilewidth')
+				tileset.tileSize[0] = int(attrs.getValue('tilewidth'))
 			if 'tileheight' in attrs.getNames():
-				tileset.tileSize[1] = attrs.getValue('tileheight')
+				tileset.tileSize[1] = int(attrs.getValue('tileheight'))
 			if 'name' in attrs.getNames():
 				tileset.name = attrs.getValue('name')
 				
 			# K, add this tileset to the loaded map
+			self.map.tilesets.append(tileset)
+			
 			# We can add things from nested tags into it later.
 			
 			self.inTileset = True
@@ -99,7 +69,7 @@ class MapLoader(handler):
 		if name == 'image' and self.inTileset:
 			# Find the location of the image and load it
 			if 'source' in attrs.getNames():
-				self.tileset[-1].data = self.drawer.loadImage(attr.getValue('source'))
+				self.map.tilesets[-1].load(attrs.getValue('source'), self.map.tilesets[-1].tileSize)
 			
 			# K, done... assuming that image loaded.
 			
@@ -110,13 +80,13 @@ class MapLoader(handler):
 			
 			# Get the name of the layer
 			if 'name' in attrs.getNames():
-				layer.name = attrs.getName('name')
+				layer.name = attrs.getValue('name')
 			
 			# Width and Height
 			if 'width' in attrs.getNames():
-				layer.width = attrs.getName('width')
+				layer.width = int(attrs.getValue('width'))
 			if 'height' in attrs.getNames():
-				layer.height = attrs.getName('height')
+				layer.height = int(attrs.getValue('height'))
 			
 			# Add the new layer to the map
 			self.map.layers.append(layer)
@@ -128,7 +98,7 @@ class MapLoader(handler):
 		if name == 'data' and self.inLayer:
 			# Find out how the data is encoded
 			if 'encoding' in attrs.getNames():
-				self.dataEncoding = attrs.getName('encoding')
+				self.dataEncoding = attrs.getValue('encoding')
 			
 			# Flush the buffer
 			self.dataBuffer = ''
@@ -149,7 +119,7 @@ class MapLoader(handler):
 			self.dataBuffer += content
 	
 	# The end of an xml tag
-	def endElement(self, name, attrs):
+	def endElement(self, name):
 		if name == 'map':
 			self.inMap = False
 		if name == 'tileset':
@@ -159,6 +129,58 @@ class MapLoader(handler):
 		if name == 'data':
 			# Decode the data in the buffer
 			if self.dataEncoding == 'csv':
-				self.layers[-1].data = self.dataBuffer.split(',')
+				for tile in self.dataBuffer.split(','):
+					self.map.layers[-1].data.append(int(tile))
 			
 			self.inData = False
+
+# The map class
+
+class Map (Base):
+	def __init__(self):
+		Base.__init__(self)
+		
+		# Define some variables
+		self.tilesets = []					# Tilesets the map can use
+		self.drawer = Drawer()				# Interface to graphics
+		
+		self.layers = []					# The map data (tiles)
+		self.size = [0, 0]					# The maps dimensions
+	
+	"""Loads a map and associated data (tilesets etc..)
+	   Args:
+			filename - The path to the map.
+	   
+	   Returns:
+			True if succesfull
+	"""
+	def load(self, filename):
+		# Parse the file with our custom handler
+		loader = MapLoader()
+		parse(filename, loader)
+		
+		self = loader.map
+		
+		# Print out the details of the map
+		print ("Loaded map!")
+		print ("Map Size", self.size)
+		for layer in self.layers:
+			print ("Layer " + layer.name + " data")
+			print (layer.data)
+		
+	"""Clears and Updates the maps image
+	   Args:
+			None
+	   Returns:
+			True if succesfull
+	"""
+	def update(self):
+		# Clear the screen
+		self.drawer.clear()
+		
+		# Draw each layer in order
+		for layer in self.layers:
+			layer.draw()
+		
+		#No Problems
+		return True

@@ -4,7 +4,6 @@
 #	The positions (pixels) of the tile on the tileset
 
 from base import Base
-from tileset import Tileset
 
 class Tile (Base):
 	def __init__(self):
