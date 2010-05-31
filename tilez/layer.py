@@ -21,6 +21,7 @@ class Layer (Base):
 	"""
 	def draw(self):
 		n = 0
-		for tile in data:
-			self.map.tilesets[0].getTile(tile % self.map.tilesets[0].sizeTiles[0], int(tile / self.map.tilesets[0].sizeTiles[0])).draw(n % self.map.width[0], int(n / self.map.size[0]))
+		for tile in self.data:
+			if tile != 0:
+				self.map.tilesets[0].getTile((tile % self.map.tilesets[0].tileSize[0], int(tile / self.map.tilesets[0].tileSize[0]))).draw((n % self.map.size[0], int(n / self.map.size[0])))
 			n += 1

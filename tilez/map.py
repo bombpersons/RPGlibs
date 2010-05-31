@@ -78,6 +78,9 @@ class MapLoader (ContentHandler):
 			# Make a new layer
 			layer = Layer()
 			
+			# Attach layer to map
+			layer.map = self.map
+			
 			# Get the name of the layer
 			if 'name' in attrs.getNames():
 				layer.name = attrs.getValue('name')
@@ -146,7 +149,14 @@ class Map (Base):
 		
 		self.layers = []					# The map data (tiles)
 		self.size = [0, 0]					# The maps dimensions
+		
+		self.setResolution(800, 600)
 	
+	""" Change the resolution to draw the map
+	"""	
+	def setResolution(self, width, height):
+		return self.drawer.setResolution(width, height)
+		
 	"""Loads a map and associated data (tilesets etc..)
 	   Args:
 			filename - The path to the map.
@@ -154,6 +164,8 @@ class Map (Base):
 	   Returns:
 			True if succesfull
 	"""
+	## TO DO:
+	## FIX THIS FUNCTION (Currently, the map is erased when the function exits)
 	def load(self, filename):
 		# Parse the file with our custom handler
 		loader = MapLoader()
@@ -184,3 +196,11 @@ class Map (Base):
 		
 		#No Problems
 		return True
+		
+# A map factory
+def loadMap(filename):
+	# Parse the file with our custom handler
+	loader = MapLoader()
+	parse(filename, loader)
+	
+	return loader.map

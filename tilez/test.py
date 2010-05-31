@@ -1,4 +1,4 @@
-from map import Map
+from map import loadMap
 from PySFML import sf
 
 if __name__ == "__main__":
@@ -6,8 +6,9 @@ if __name__ == "__main__":
 	window = sf.RenderWindow(sf.VideoMode(800, 600, 32), "Tilez Test")
 	
 	# Load a map
-	map = Map()
-	map.load("test/data/house")
+	map = loadMap("test/data/ice")
+	
+	map.drawer.image = window
 	
 	# Start the main loop
 	running = True
@@ -17,15 +18,11 @@ if __name__ == "__main__":
 			if event.Type == sf.Event.Closed:
 				running = False
 		
+		# Clear screen
+		window.Clear()
+				
 		# Draw the map
 		map.update()
 				
-		# Clear screen
-		window.Clear()
-		
-		# Draw the map to the screen
-		if map.drawer.image != None:
-			window.Draw(map.drawer.image)
-		
 		# Display the window
 		window.Display()
