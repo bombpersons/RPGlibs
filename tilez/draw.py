@@ -42,7 +42,11 @@ class Drawer (Base):
 	# Set the resolution to draw the map
 	def setResolution(self, width, height):
 		self.image = sf.Image(width, height, sf.Color(0, 0, 0, 255))
-		
+	
+	# Get the resolution
+	def getRes(self, image):
+		return (image.GetWidth(), image.GetHeight())
+	
 	# Load an image
 	def loadImage(self, filename):
 		image = sf.Image()
@@ -65,8 +69,6 @@ class Drawer (Base):
 		
 		# draw to our image
 		self.image.Draw(sprite)
-		
-		print "NHSNS"
 	
 	# clears the image to black	
 	def clear(self):

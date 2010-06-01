@@ -44,10 +44,14 @@ class Tileset (Base):
 		self.data = image
 		
 		# Set the tilesize
-		self.tilesize = size
+		self.tileSize = size
 		
 		# Get the size of the image
 		self.size = self.map.drawer.getRes(image)
+		
+		# Figure out the size of the set in tiles
+		self.sizeTiles[0] = int(self.size[0] / self.tileSize[0])
+		self.sizeTiles[1] = int(self.size[1] / self.tileSize[1])
 	
 	"""Get the top and bottom coords for a tile
 	
@@ -62,7 +66,6 @@ class Tileset (Base):
 		top = (tileCoord[0]*self.tileSize[0], tileCoord[1]*self.tileSize[1])
 		bottom = (top[0] + self.tileSize[0], top[1] + self.tileSize[1])
 		
-		print self.size
 		print top, bottom
 		
 		# Make sure these values are within the size of the tileset

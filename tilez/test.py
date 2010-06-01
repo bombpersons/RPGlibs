@@ -6,7 +6,7 @@ if __name__ == "__main__":
 	window = sf.RenderWindow(sf.VideoMode(800, 600, 32), "Tilez Test")
 	
 	# Load a map
-	map = loadMap("test/data/ice")
+	map = loadMap("test/data/house")
 	
 	map.drawer.image = window
 	
