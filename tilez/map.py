@@ -7,6 +7,7 @@ from base import Base
 from draw import Drawer
 from tileset import Tileset
 from layer import Layer
+from camera import Camera
 
 from xml.sax import ContentHandler, parse
 
@@ -147,10 +148,12 @@ class Map (Base):
 		self.tilesets = []					# Tilesets the map can use
 		self.drawer = Drawer()				# Interface to graphics
 		
+		self.camera = Camera()				# The camera to use as the position of the viewer
+		
 		self.layers = []					# The map data (tiles)
 		self.size = [0, 0]					# The maps dimensions
 		
-		self.setResolution(800, 600)
+		self.setResolution(800, 600)		# Default resolution
 	
 	""" Change the resolution to draw the map
 	"""	

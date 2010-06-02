@@ -66,8 +66,6 @@ class Tileset (Base):
 		top = (tileCoord[0]*self.tileSize[0], tileCoord[1]*self.tileSize[1])
 		bottom = (top[0] + self.tileSize[0], top[1] + self.tileSize[1])
 		
-		print top, bottom
-		
 		# Make sure these values are within the size of the tileset
 		if top[0] < 0 or top[1] < 0 or bottom[0] > self.size[0] or bottom[1] > self.size[1]:
 			# One of the values is too big
