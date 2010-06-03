@@ -4,7 +4,7 @@
 #	The map's 
 
 from base import Base
-from draw import Drawer
+from draw import DrawerSDL
 from tileset import Tileset
 from layer import Layer
 from camera import Camera
@@ -25,6 +25,7 @@ class MapLoader (ContentHandler):
 		self.inTileset = False
 		self.inLayer = False
 		self.inData = False
+		self.inProperties = False
 		
 	# The start of an xml tag
 	def startElement(self, name, attrs):
@@ -97,7 +98,19 @@ class MapLoader (ContentHandler):
 			
 			# We're inside the layer tag now
 			self.inLayer = True
-			
+		
+		# Properties
+		if name == 'properties' and self.inLayer:
+			self.inProperties = True
+		
+		if name == 'property' and self.inProperties and self.inLayer:
+			# Add this property to the current layer
+			if 'name' in attrs.getNames():
+				if attrs.getValue('name') == 'Solid':
+					if 'value' in attrs.getNames():
+						if attrs.getValue('value') == '1':
+							self.map.layers[-1].solid = True
+		
 		# Data Tag
 		if name == 'data' and self.inLayer:
 			# Find out how the data is encoded
@@ -137,16 +150,18 @@ class MapLoader (ContentHandler):
 					self.map.layers[-1].data.append(int(tile))
 			
 			self.inData = False
+		if name == 'properties':
+			self.inProperties = False
 
 # The map class
 
 class Map (Base):
-	def __init__(self):
+	def __init__(self, drawer=DrawerSDL()):
 		Base.__init__(self)
 		
 		# Define some variables
 		self.tilesets = []					# Tilesets the map can use
-		self.drawer = Drawer()				# Interface to graphics
+		self.drawer = drawer				# Interface to graphics (Default is SDL)
 		
 		self.camera = Camera()				# The camera to use as the position of the viewer
 		
@@ -200,10 +215,18 @@ class Map (Base):
 		#No Problems
 		return True
 		
+	"""Checks for collision
+	"""
+	def isColliding(self, pos):
+		for layer in self.layers:
+			if layer.isColliding(pos):
+				return True
+		
 # A map factory
-def loadMap(filename):
+def loadMap(filename, map=Map()):
 	# Parse the file with our custom handler
 	loader = MapLoader()
+	loader.map = map
 	parse(filename, loader)
 	
 	return loader.map

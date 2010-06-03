@@ -9,6 +9,7 @@ if __name__ == "__main__":
 	
 	# Load a map
 	map = loadMap("test/data/house")
+	print map.layers[1].solid
 	
 	running = True
 	n = 0
@@ -19,18 +20,21 @@ if __name__ == "__main__":
 		
 		keys = pygame.key.get_pressed()
 		if keys[pygame.K_UP]:
-			map.camera.pos[1] += 5
-		if keys[pygame.K_DOWN]:
 			map.camera.pos[1] -= 5
+		if keys[pygame.K_DOWN]:
+			map.camera.pos[1] += 5
 		if keys[pygame.K_LEFT]:
-			map.camera.pos[0] += 5
-		if keys[pygame.K_RIGHT]:
 			map.camera.pos[0] -= 5
+		if keys[pygame.K_RIGHT]:
+			map.camera.pos[0] += 5
+		
+		if map.isColliding(map.camera.pos):
+			print "Colliding!"
 				
 		screen.fill((0, 0, 0))
 		map.update()
 		screen.blit(map.drawer.image, (0, 0))
 		pygame.display.flip()
 		
-		print n
+		#print n
 		n += 1

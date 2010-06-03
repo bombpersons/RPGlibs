@@ -1,4 +1,5 @@
-from map import loadMap
+from map import loadMap, Map
+from draw import DrawerSFML
 from camera import Camera
 from PySFML import sf
 
@@ -7,8 +8,9 @@ if __name__ == "__main__":
 	window = sf.RenderWindow(sf.VideoMode(800, 600, 32), "Tilez Test")
 	
 	# Load a map
-	map = loadMap("test/data/house")
-	
+	map = Map()
+	map.drawer = DrawerSFML()
+	map = loadMap("test/data/house", map=map)
 	map.drawer.image = window
 	
 	map.camera = Camera()
@@ -28,13 +30,16 @@ if __name__ == "__main__":
 		
 		# Move map
 		if input.IsKeyDown(sf.Key.Left):
-			map.camera.pos[0] += 5
-		if input.IsKeyDown(sf.Key.Right):
 			map.camera.pos[0] -= 5
+		if input.IsKeyDown(sf.Key.Right):
+			map.camera.pos[0] += 5
 		if input.IsKeyDown(sf.Key.Up):
-			map.camera.pos[1] += 5
-		if input.IsKeyDown(sf.Key.Down):
 			map.camera.pos[1] -= 5
+		if input.IsKeyDown(sf.Key.Down):
+			map.camera.pos[1] += 5
+		
+		if map.isColliding(map.camera.pos):
+			print "Colliding!"
 		
 		# Clear screen
 		window.Clear()
@@ -42,7 +47,7 @@ if __name__ == "__main__":
 		# Draw the map
 		map.update()
 		
-		print n
+		#print n
 		n += 1
 		
 		# Display the window
