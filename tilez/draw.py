@@ -22,7 +22,7 @@ class DrawerSDL (Base):
 		self.yCameraMultiplier = 1		# and also for the y axis
 		
 	def setResolution(self, width, height):
-		self.image = pygame.Surface((width, height), flags=HWSURFACE)
+		self.image = pygame.Surface((width, height))
 	
 	def getRes(self, image):
 		return (image.get_width(), image.get_height())
@@ -46,30 +46,37 @@ class DrawerSDL (Base):
 	def clear(self):
 		self.image.fill((0, 0, 0))
 
-## Pyglet
+# Pyglet
 
-#import pyglet
-#from base import Base
+import pyglet
+from base import Base
 
-#class Drawer (Base):
-	#def __init__(self):
-		#Base.__init__(self)
+class DrawerPyGlet (Base):
+	def __init__(self):
+		Base.__init__(self)
 		
-		#self.image = None
+		self.image = None
 		
-	#def setResolution(self, width, height):
-		#self.image = pyglet.image.create(width, height)
+		# Variables for tiled to work with.
+		self.xCameraMultiplier = 1		# tells the camera which direction is positive on the x axis
+		self.yCameraMultiplier = 1		# and also for the y axis			
 		
-	#def loadImage(self, filename):
-		#return pyglet.image.load(filename)
-		
-	#def blit(self, top, bottom, pos, source):
-		#subimage = source.get_region(top[0], top[1], top[0] - bottom[0], top[1] - bottom[0])
-		#self.image.texture.blit_into(subimage, pos[0], pos[1], 0)
+	def setResolution(self, width, height):
+		self.image = pyglet.image.Texture.create(width, height)
 	
-	#def clear(self):
-		##self.image.clear()
-		#pass
+	def getRes(self, image):
+		return (image.width, image.height)
+		
+	def loadImage(self, filename):
+		return pyglet.image.load(filename).get_texture()
+		
+	def blit(self, top, bottom, pos, source):
+		subimage = source.get_region(top[0], top[1], bottom[0] - top[0], bottom[1] - top[1])
+		subimage.blit_to_texture(self.image, pos[0], pos[1], 0)
+	
+	def clear(self):
+		#self.image.clear()
+		pass
 
 from PySFML import sf
 from base import Base

@@ -13,7 +13,11 @@ if __name__ == "__main__":
 	
 	running = True
 	n = 0
+	oldtime = 0
+	timeTaken = 0
 	while running:
+		oldtime = pygame.time.get_ticks()
+		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				running = False
@@ -29,12 +33,12 @@ if __name__ == "__main__":
 			map.camera.pos[0] += 5
 		
 		if map.isColliding(map.camera.pos):
-			print "Colliding!"
+			pass
 				
 		screen.fill((0, 0, 0))
 		map.update()
 		screen.blit(map.drawer.image, (0, 0))
 		pygame.display.flip()
 		
-		#print n
-		n += 1
+		timeTaken = pygame.time.get_ticks() - oldtime
+		print 1000 / timeTaken

@@ -23,4 +23,5 @@ class Camera (Base):
 	def __init__(self):
 		Base.__init__(self)
 		
-		self.pos = [0, 0]		# Where the center of the camera is pointing
+		self.pos = [0, 0]			# Where the center of the camera is pointing
+		self.oldpos = [9999, 9999]	# Where we were pointing at last frame (used to optimise map drawing)

@@ -205,12 +205,50 @@ class Map (Base):
 			True if succesfull
 	"""
 	def update(self):
-		# Clear the screen
-		self.drawer.clear()
-		
-		# Draw each layer in order
-		for layer in self.layers:
-			layer.draw()
+		# First check if the camera has moved
+		# If the camera hasn't moved then there is no point in redrawing
+		# the whole map again.
+		if self.camera.pos !=  self.camera.oldpos:
+			
+			# Even if the camera has changed positions, we still don't
+			# need to redraw the whole map. We can blit the part of the
+			# image that won't change and save some cpu cycles and
+			# hopefully increase the FPS.
+			
+			# Calculate the amount the camera moved.
+			diff = (self.camera.oldpos[0] - self.camera.pos[0], self.camera.oldpos[1] - self.camera.pos[1])
+			
+			# If this is more than the whole screen size, then we might
+			# as well redraw the whole screen.
+			if (diff[0] > self.drawer.getRes(self.drawer.image)[0] and diff[1] > self.drawer.getRes(self.drawer.image)[1]) or (diff[0] < -1*self.drawer.getRes(self.drawer.image)[0] and diff[1] < -1*self.drawer.getRes(self.drawer.image)[1]):
+				
+				# Clear the screen
+				self.drawer.clear()
+				
+				# Draw each layer in order
+				for layer in self.layers:
+					layer.draw()
+			
+			# If not, move the screen accordingly and only update the
+			# bit we need to.
+			else:
+				# Blit the the part of the screen that hasn't changed
+				self.drawer.blit((0, 0), self.drawer.getRes(self.drawer.image), diff, self.drawer.image)
+				
+				# Update the part of the screen that is new.
+				for layer in self.layers:
+					if diff[0] > 0:
+						layer.drawRect((0, 0), (diff[0], self.drawer.getRes(self.drawer.image)[1]))
+					elif diff[0] < 0:
+						layer.drawRect((self.drawer.getRes(self.drawer.image)[0] + diff[0], 0), self.drawer.getRes(self.drawer.image))
+					
+					if diff[1] > 0:
+						layer.drawRect((0, 0), 	(self.drawer.getRes(self.drawer.image)[0], diff[1]))
+					elif diff[1] < 0:
+						layer.drawRect((0, self.drawer.getRes(self.drawer.image)[1] + diff[1]), self.drawer.getRes(self.drawer.image))
+			
+			# Update the camera
+			self.camera.oldpos = (self.camera.pos[0], self.camera.pos[1])
 		
 		#No Problems
 		return True

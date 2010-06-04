@@ -22,7 +22,11 @@ if __name__ == "__main__":
 	running = True
 	n = 0
 	
+	clock = sf.Clock()
+	
 	while running:
+		clock.Reset()
+		
 		event = sf.Event()
 		while window.GetEvent(event):
 			if event.Type == sf.Event.Closed:
@@ -39,7 +43,7 @@ if __name__ == "__main__":
 			map.camera.pos[1] += 5
 		
 		if map.isColliding(map.camera.pos):
-			print "Colliding!"
+			pass
 		
 		# Clear screen
 		window.Clear()
@@ -52,3 +56,5 @@ if __name__ == "__main__":
 		
 		# Display the window
 		window.Display()
+		
+		print 1 / clock.GetElapsedTime()
