@@ -235,6 +235,17 @@ class Map (Base):
 				# Blit the the part of the screen that hasn't changed
 				self.drawer.blit((0, 0), self.drawer.getRes(self.drawer.image), diff, self.drawer.image)
 				
+				# Cover up the space with black
+				if diff[0] > 0:
+					self.drawer.clear(rect=(0, 0, diff[0], self.drawer.getRes(self.drawer.image)[1]))
+				elif diff[0] < 0:
+					self.drawer.clear(rect=(self.drawer.getRes(self.drawer.image)[0] + diff[0], 0, self.drawer.getRes(self.drawer.image)[0], self.drawer.getRes(self.drawer.image)[1]))
+				
+				if diff[1] > 0:
+					self.drawer.clear(rect=(0, 0, self.drawer.getRes(self.drawer.image)[0], diff[1]))
+				elif diff[1] < 0:
+					self.drawer.clear(rect=(0, self.drawer.getRes(self.drawer.image)[1] + diff[1], self.drawer.getRes(self.drawer.image)[0], self.drawer.getRes(self.drawer.image)[1]))
+						
 				# Update the part of the screen that is new.
 				for layer in self.layers:
 					if diff[0] > 0:
@@ -259,6 +270,20 @@ class Map (Base):
 		for layer in self.layers:
 			if layer.isColliding(pos):
 				return True
+				
+	def isRectColliding(self, rect):
+		for layer in self.layers:
+			if layer.isRectColliding(rect):
+				return True
+				
+	""" Convert global coords to local coords
+	"""
+	def globalToLocal(self, pos):
+		# Figure out where to draw the tile on the screen
+		drawX = (pos[0] + ((self.drawer.getRes(self.drawer.image)[0] / 2) - self.drawer.xCameraMultiplier*self.camera.pos[0]))
+		drawY = (pos[1] + ((self.drawer.getRes(self.drawer.image)[1] / 2) - self.drawer.yCameraMultiplier*self.camera.pos[1]))
+		
+		return (drawX, drawY)
 		
 # A map factory
 def loadMap(filename, map=Map()):

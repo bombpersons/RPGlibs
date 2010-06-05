@@ -9,7 +9,6 @@ if __name__ == "__main__":
 	
 	# Load a map
 	map = loadMap("test/data/house")
-	print map.layers[1].solid
 	
 	running = True
 	n = 0

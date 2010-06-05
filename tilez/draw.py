@@ -41,10 +41,10 @@ class DrawerSDL (Base):
 	
 	def blit(self, top, bottom, pos, source):
 		if self.image != None:
-			self.image.blit(source, (pos[0], pos[1]), area=(top[0], top[1], bottom[0] - top[0], bottom[1] - top[1]))
+			self.image.blit(source, pos, area=(top[0], top[1], bottom[0] - top[0], bottom[1] - top[1]))
 	
-	def clear(self):
-		self.image.fill((0, 0, 0))
+	def clear(self, rect=None):
+		self.image.fill((0, 0, 0), rect=rect)
 
 # Pyglet
 
