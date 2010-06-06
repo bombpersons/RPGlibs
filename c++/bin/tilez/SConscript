@@ -1,0 +1,5 @@
+Import('env')
+
+sources = ['tilez.cpp']
+
+env.StaticLibrary('tilez', sources)

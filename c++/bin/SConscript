@@ -1,0 +1,5 @@
+# Build a test, 'hello world' app.
+SConscript('test/SConscript')
+
+# Build tilez
+SConscript('tilez/SConscript')

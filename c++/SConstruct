@@ -1,0 +1,5 @@
+# This is run to build the source
+env = Environment()
+Export('env')
+
+SConscript('src/SConscript', build_dir='bin')
